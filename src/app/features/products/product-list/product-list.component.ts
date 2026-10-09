@@ -51,6 +51,7 @@ export class ProductListComponent {
   );
 
   protected readonly openMenuId = signal<string | null>(null);
+  protected readonly menuPosition = signal<{ top: number; left: number } | null>(null);
   protected readonly productToDelete = signal<Product | null>(null);
   protected readonly deleting = signal(false);
   protected readonly deleteError = signal<string | null>(null);
@@ -61,11 +62,20 @@ export class ProductListComponent {
 
   protected toggleMenu(productId: string, event: Event): void {
     event.stopPropagation();
-    this.openMenuId.set(this.openMenuId() === productId ? null : productId);
+
+    if (this.openMenuId() === productId) {
+      this.closeMenu();
+      return;
+    }
+
+    const triggerRect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    this.menuPosition.set({ top: triggerRect.bottom + 4, left: triggerRect.right });
+    this.openMenuId.set(productId);
   }
 
   protected closeMenu(): void {
     this.openMenuId.set(null);
+    this.menuPosition.set(null);
   }
 
   protected openDeleteModal(product: Product, event: Event): void {

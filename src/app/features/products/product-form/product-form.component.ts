@@ -13,7 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 import {
@@ -35,7 +35,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 @Component({
   selector: 'app-product-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

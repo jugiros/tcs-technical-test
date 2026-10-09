@@ -80,9 +80,13 @@
                   >
                     ⋮
                   </button>
-                  @if (openMenuId() === product.id) {
-                    <div class="menu-backdrop" (click)="closeMenu()"></div>
-                    <div class="dropdown-menu">
+                  @if (openMenuId() === product.id && menuPosition(); as position) {
+                    <div class="overlay-backdrop" (click)="closeMenu()"></div>
+                    <div
+                      class="dropdown-menu"
+                      [style.top.px]="position.top"
+                      [style.left.px]="position.left"
+                    >
                       <a
                         class="dropdown-menu__item"
                         [routerLink]="['/products', product.id, 'edit']"
@@ -124,7 +128,7 @@
 </section>
 
 @if (productToDelete(); as product) {
-  <div class="confirm-modal-backdrop">
+  <div class="overlay-backdrop overlay-backdrop--dim">
     <div class="confirm-modal">
       <p class="confirm-modal__message">
         ¿Estás seguro de eliminar el producto {{ product.name }}?
