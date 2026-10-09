@@ -51,7 +51,7 @@
               <td class="empty-state" colspan="5">No se encontraron productos financieros.</td>
             </tr>
           } @else {
-            @for (product of filteredProducts(); track product.id) {
+            @for (product of displayedProducts(); track product.id) {
               <tr>
                 <td>
                   <span class="avatar">
@@ -77,6 +77,16 @@
 
     <div class="product-card__footer">
       <span class="results-count">{{ filteredProducts().length }} Resultados</span>
+      <select
+        class="page-size-select"
+        [value]="pageSize()"
+        (change)="onPageSizeChange($event)"
+        aria-label="Cantidad de registros a mostrar"
+      >
+        @for (option of pageSizeOptions; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
     </div>
   }
 </section>

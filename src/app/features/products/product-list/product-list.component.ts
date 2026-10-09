@@ -14,11 +14,13 @@ import { ProductService } from '../../../core/services/product.service';
 export class ProductListComponent {
   private readonly productService = inject(ProductService);
 
+  protected readonly pageSizeOptions = [5, 10, 20] as const;
   protected readonly skeletonRows = Array.from({ length: 5 });
   protected readonly products = signal<Product[]>([]);
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly searchTerm = signal('');
+  protected readonly pageSize = signal<number>(this.pageSizeOptions[0]);
 
   protected readonly filteredProducts = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
@@ -35,12 +37,20 @@ export class ProductListComponent {
     );
   });
 
+  protected readonly displayedProducts = computed(() =>
+    this.filteredProducts().slice(0, this.pageSize()),
+  );
+
   constructor() {
     this.loadProducts();
   }
 
   protected onSearchInput(event: Event): void {
     this.searchTerm.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onPageSizeChange(event: Event): void {
+    this.pageSize.set(Number((event.target as HTMLSelectElement).value));
   }
 
   protected initials(name: string): string {
