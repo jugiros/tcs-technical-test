@@ -1,3 +1,5 @@
+@use 'breakpoints' as *;
+
 :root {
   --color-primary: #1a2b4c;
   --color-primary-dark: #0f1a33;
@@ -65,6 +67,11 @@ textarea {
   border-radius: var(--radius-md);
   padding: var(--spacing-lg);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+  }
 }
 
 .btn {
@@ -122,6 +129,11 @@ textarea {
   .form-field {
     flex: 1;
   }
+
+  @media (max-width: $breakpoint-mobile) {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
 }
 
 .form-field {
@@ -169,6 +181,14 @@ textarea {
   justify-content: center;
   gap: var(--spacing-md);
   margin-top: var(--spacing-lg);
+
+  @media (max-width: $breakpoint-mobile) {
+    flex-direction: column-reverse;
+
+    .btn {
+      width: 100%;
+    }
+  }
 }
 
 .back-link {
