@@ -13,7 +13,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Product } from '../../../core/models/product.model';
 import { ProductService } from '../../../core/services/product.service';
 import {
   addOneYearToIsoDate,
@@ -43,10 +44,15 @@ export class ProductFormComponent {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly productService = inject(ProductService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+
+  protected readonly productId = this.route.snapshot.paramMap.get('id');
+  protected readonly isEditMode = !!this.productId;
 
   protected readonly submitting = signal(false);
   protected readonly submitError = signal<string | null>(null);
+  protected readonly loadError = signal<string | null>(null);
 
   protected readonly form = this.fb.group(
     {
@@ -80,12 +86,19 @@ export class ProductFormComponent {
     () => this.formStatus() === 'VALID' && !this.submitting(),
   );
 
+  private originalProduct: Product | null = null;
+
   constructor() {
     this.form.controls.date_revision.disable();
 
     this.form.controls.date_release.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
       this.form.controls.date_revision.setValue(value ? addOneYearToIsoDate(value) : '');
     });
+
+    if (this.isEditMode && this.productId) {
+      this.form.controls.id.disable();
+      this.loadProduct(this.productId);
+    }
   }
 
   protected hasError(controlName: ProductFormControlName): boolean {
@@ -112,22 +125,50 @@ export class ProductFormComponent {
     this.submitting.set(true);
     this.submitError.set(null);
 
-    this.productService
-      .createProduct(this.form.getRawValue())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => this.router.navigate(['/']),
-        error: () => {
-          this.submitError.set(
-            'No se pudo crear el producto financiero. Intenta nuevamente más tarde.',
-          );
-          this.submitting.set(false);
-        },
-      });
+    const rawValue = this.form.getRawValue();
+    const { id, ...payload } = rawValue;
+    const request = this.isEditMode
+      ? this.productService.updateProduct(id, payload)
+      : this.productService.createProduct(rawValue);
+
+    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.router.navigate(['/']),
+      error: () => {
+        this.submitError.set(
+          'No se pudo guardar el producto financiero. Intenta nuevamente más tarde.',
+        );
+        this.submitting.set(false);
+      },
+    });
   }
 
   protected onReset(): void {
+    if (this.originalProduct) {
+      this.form.patchValue(this.originalProduct);
+      return;
+    }
     this.form.reset();
     this.form.controls.date_revision.disable();
+  }
+
+  private loadProduct(id: string): void {
+    this.productService
+      .getProductById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (product) => {
+          if (!product) {
+            this.loadError.set('No se encontró el producto financiero solicitado.');
+            return;
+          }
+          this.originalProduct = product;
+          this.form.patchValue(product);
+        },
+        error: () => {
+          this.loadError.set(
+            'No se pudo cargar el producto financiero. Intenta nuevamente más tarde.',
+          );
+        },
+      });
   }
 }

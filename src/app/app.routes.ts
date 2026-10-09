@@ -15,4 +15,11 @@ export const routes: Routes = [
         (m) => m.ProductFormComponent,
       ),
   },
+  {
+    path: 'products/:id/edit',
+    loadComponent: () =>
+      import('./features/products/product-form/product-form.component').then(
+        (m) => m.ProductFormComponent,
+      ),
+  },
 ];

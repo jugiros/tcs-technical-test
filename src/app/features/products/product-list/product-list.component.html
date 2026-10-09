@@ -34,6 +34,7 @@
               Fecha de reestructuración
               <span class="info-icon" title="Fecha de revisión de términos y condiciones">ⓘ</span>
             </th>
+            <th class="actions-header"></th>
           </tr>
         </thead>
         <tbody>
@@ -45,11 +46,12 @@
                 <td><span class="skeleton skeleton--text"></span></td>
                 <td><span class="skeleton skeleton--text skeleton--short"></span></td>
                 <td><span class="skeleton skeleton--text skeleton--short"></span></td>
+                <td></td>
               </tr>
             }
           } @else if (filteredProducts().length === 0) {
             <tr>
-              <td class="empty-state" colspan="5">No se encontraron productos financieros.</td>
+              <td class="empty-state" colspan="6">No se encontraron productos financieros.</td>
             </tr>
           } @else {
             @for (product of displayedProducts(); track product.id) {
@@ -69,6 +71,28 @@
                 <td class="cell-description">{{ product.description }}</td>
                 <td>{{ product.date_release | date: 'dd/MM/yyyy':'UTC' }}</td>
                 <td>{{ product.date_revision | date: 'dd/MM/yyyy':'UTC' }}</td>
+                <td class="actions-cell">
+                  <button
+                    type="button"
+                    class="menu-trigger"
+                    (click)="toggleMenu(product.id, $event)"
+                    aria-label="Más acciones"
+                  >
+                    ⋮
+                  </button>
+                  @if (openMenuId() === product.id) {
+                    <div class="menu-backdrop" (click)="closeMenu()"></div>
+                    <div class="dropdown-menu">
+                      <a
+                        class="dropdown-menu__item"
+                        [routerLink]="['/products', product.id, 'edit']"
+                        (click)="closeMenu()"
+                      >
+                        Editar
+                      </a>
+                    </div>
+                  }
+                </td>
               </tr>
             }
           }

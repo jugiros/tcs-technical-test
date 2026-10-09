@@ -1,5 +1,13 @@
 <section class="surface-card form-card">
-  <h1 class="form-card__title">Formulario de Registro</h1>
+  <h1 class="form-card__title">
+    {{ isEditMode ? 'Formulario de Edición' : 'Formulario de Registro' }}
+  </h1>
+
+  @if (loadError()) {
+    <div class="state-banner state-banner--error" role="alert">
+      {{ loadError() }}
+    </div>
+  }
 
   <form class="product-form" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form-row">

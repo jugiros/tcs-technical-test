@@ -42,8 +42,19 @@ export class ProductListComponent {
     this.filteredProducts().slice(0, this.pageSize()),
   );
 
+  protected readonly openMenuId = signal<string | null>(null);
+
   constructor() {
     this.loadProducts();
+  }
+
+  protected toggleMenu(productId: string, event: Event): void {
+    event.stopPropagation();
+    this.openMenuId.set(this.openMenuId() === productId ? null : productId);
+  }
+
+  protected closeMenu(): void {
+    this.openMenuId.set(null);
   }
 
   protected onSearchInput(event: Event): void {
