@@ -1,0 +1,82 @@
+<section class="surface-card product-card">
+  <div class="product-card__toolbar">
+    <input
+      class="search-input"
+      type="search"
+      placeholder="Search.."
+      [value]="searchTerm()"
+      (input)="onSearchInput($event)"
+      aria-label="Buscar producto financiero"
+    />
+  </div>
+
+  @if (errorMessage()) {
+    <div class="state-banner state-banner--error" role="alert">
+      {{ errorMessage() }}
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Logo</th>
+            <th>Nombre del producto</th>
+            <th>
+              Descripción
+              <span class="info-icon" title="Descripción breve del producto financiero">ⓘ</span>
+            </th>
+            <th>
+              Fecha de liberación
+              <span class="info-icon" title="Fecha en la que el producto se libera a los clientes">ⓘ</span>
+            </th>
+            <th>
+              Fecha de reestructuración
+              <span class="info-icon" title="Fecha de revisión de términos y condiciones">ⓘ</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            @for (row of skeletonRows; track $index) {
+              <tr class="skeleton-row">
+                <td><span class="skeleton skeleton--avatar"></span></td>
+                <td><span class="skeleton skeleton--text"></span></td>
+                <td><span class="skeleton skeleton--text"></span></td>
+                <td><span class="skeleton skeleton--text skeleton--short"></span></td>
+                <td><span class="skeleton skeleton--text skeleton--short"></span></td>
+              </tr>
+            }
+          } @else if (filteredProducts().length === 0) {
+            <tr>
+              <td class="empty-state" colspan="5">No se encontraron productos financieros.</td>
+            </tr>
+          } @else {
+            @for (product of filteredProducts(); track product.id) {
+              <tr>
+                <td>
+                  <span class="avatar">
+                    <span class="avatar__initials">{{ initials(product.name) }}</span>
+                    <img
+                      class="avatar__image"
+                      [src]="product.logo"
+                      [alt]="product.name"
+                      (error)="hideBrokenLogo($event)"
+                    />
+                  </span>
+                </td>
+                <td>{{ product.name }}</td>
+                <td class="cell-description">{{ product.description }}</td>
+                <td>{{ product.date_release | date: 'dd/MM/yyyy':'UTC' }}</td>
+                <td>{{ product.date_revision | date: 'dd/MM/yyyy':'UTC' }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="product-card__footer">
+      <span class="results-count">{{ filteredProducts().length }} Resultados</span>
+    </div>
+  }
+</section>
