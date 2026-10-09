@@ -86,7 +86,7 @@
 
     <div class="form-actions">
       <button type="button" class="btn btn--secondary" (click)="onReset()">Reiniciar</button>
-      <button type="submit" class="btn btn--primary" [disabled]="form.invalid || form.pending || submitting()">
+      <button type="submit" class="btn btn--primary" [disabled]="!canSubmit()">
         Enviar
       </button>
     </div>

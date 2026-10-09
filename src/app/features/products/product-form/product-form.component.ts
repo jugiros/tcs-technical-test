@@ -1,6 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+  FormControlStatus,
   NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
@@ -35,6 +43,7 @@ export class ProductFormComponent {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly productService = inject(ProductService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly submitting = signal(false);
   protected readonly submitError = signal<string | null>(null);
@@ -63,6 +72,14 @@ export class ProductFormComponent {
     { validators: [oneYearAfterValidator('date_release', 'date_revision')] },
   );
 
+  private readonly formStatus = toSignal(this.form.statusChanges, {
+    initialValue: this.form.status as FormControlStatus,
+  });
+
+  protected readonly canSubmit = computed(
+    () => this.formStatus() === 'VALID' && !this.submitting(),
+  );
+
   constructor() {
     this.form.controls.date_revision.disable();
 
@@ -72,6 +89,7 @@ export class ProductFormComponent {
   }
 
   protected hasError(controlName: ProductFormControlName): boolean {
+    this.formStatus();
     const control = this.form.controls[controlName];
     return control.invalid && (control.dirty || control.touched);
   }
@@ -96,7 +114,7 @@ export class ProductFormComponent {
 
     this.productService
       .createProduct(this.form.getRawValue())
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/']),
         error: () => {
