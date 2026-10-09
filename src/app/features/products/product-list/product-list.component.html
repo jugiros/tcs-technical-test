@@ -90,6 +90,13 @@
                       >
                         Editar
                       </a>
+                      <button
+                        type="button"
+                        class="dropdown-menu__item dropdown-menu__item--danger"
+                        (click)="openDeleteModal(product, $event)"
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   }
                 </td>
@@ -115,3 +122,33 @@
     </div>
   }
 </section>
+
+@if (productToDelete(); as product) {
+  <div class="confirm-modal-backdrop">
+    <div class="confirm-modal">
+      <p class="confirm-modal__message">
+        ¿Estás seguro de eliminar el producto {{ product.name }}?
+      </p>
+
+      @if (deleteError()) {
+        <div class="state-banner state-banner--error" role="alert">
+          {{ deleteError() }}
+        </div>
+      }
+
+      <div class="confirm-modal__actions">
+        <button type="button" class="btn btn--secondary" (click)="cancelDelete()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn--primary"
+          [disabled]="deleting()"
+          (click)="confirmDelete()"
+        >
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+}

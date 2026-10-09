@@ -37,4 +37,8 @@ export class ProductService {
       .put<{ data: Product }>(API_ENDPOINTS.product(id), product)
       .pipe(map((response) => response.data));
   }
+
+  deleteProduct(id: string): Observable<void> {
+    return this.http.delete<void>(API_ENDPOINTS.product(id));
+  }
 }

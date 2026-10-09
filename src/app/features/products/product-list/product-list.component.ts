@@ -1,5 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../../core/models/product.model';
@@ -14,6 +21,7 @@ import { ProductService } from '../../../core/services/product.service';
 })
 export class ProductListComponent {
   private readonly productService = inject(ProductService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly pageSizeOptions = [5, 10, 20] as const;
   protected readonly skeletonRows = Array.from({ length: 5 });
@@ -43,6 +51,9 @@ export class ProductListComponent {
   );
 
   protected readonly openMenuId = signal<string | null>(null);
+  protected readonly productToDelete = signal<Product | null>(null);
+  protected readonly deleting = signal(false);
+  protected readonly deleteError = signal<string | null>(null);
 
   constructor() {
     this.loadProducts();
@@ -55,6 +66,44 @@ export class ProductListComponent {
 
   protected closeMenu(): void {
     this.openMenuId.set(null);
+  }
+
+  protected openDeleteModal(product: Product, event: Event): void {
+    event.stopPropagation();
+    this.closeMenu();
+    this.deleteError.set(null);
+    this.productToDelete.set(product);
+  }
+
+  protected cancelDelete(): void {
+    this.productToDelete.set(null);
+  }
+
+  protected confirmDelete(): void {
+    const product = this.productToDelete();
+    if (!product) {
+      return;
+    }
+
+    this.deleting.set(true);
+    this.deleteError.set(null);
+
+    this.productService
+      .deleteProduct(product.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.products.set(this.products().filter((item) => item.id !== product.id));
+          this.deleting.set(false);
+          this.productToDelete.set(null);
+        },
+        error: () => {
+          this.deleteError.set(
+            'No se pudo eliminar el producto financiero. Intenta nuevamente más tarde.',
+          );
+          this.deleting.set(false);
+        },
+      });
   }
 
   protected onSearchInput(event: Event): void {
