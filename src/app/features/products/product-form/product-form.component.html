@@ -1,0 +1,94 @@
+<section class="surface-card form-card">
+  <h1 class="form-card__title">Formulario de Registro</h1>
+
+  <form class="product-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <div class="form-field">
+        <label for="id">ID</label>
+        <input
+          id="id"
+          type="text"
+          formControlName="id"
+          [class.has-error]="hasError('id')"
+        />
+        @if (hasError('id')) {
+          <span class="field-error">{{ errorMessage('id') }}</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="name">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          [class.has-error]="hasError('name')"
+        />
+        @if (hasError('name')) {
+          <span class="field-error">{{ errorMessage('name') }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="description">Descripción</label>
+        <input
+          id="description"
+          type="text"
+          formControlName="description"
+          [class.has-error]="hasError('description')"
+        />
+        @if (hasError('description')) {
+          <span class="field-error">{{ errorMessage('description') }}</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="logo">Logo</label>
+        <input
+          id="logo"
+          type="text"
+          formControlName="logo"
+          [class.has-error]="hasError('logo')"
+        />
+        @if (hasError('logo')) {
+          <span class="field-error">{{ errorMessage('logo') }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="date_release">Fecha Liberación</label>
+        <input
+          id="date_release"
+          type="date"
+          formControlName="date_release"
+          [class.has-error]="hasError('date_release')"
+        />
+        @if (hasError('date_release')) {
+          <span class="field-error">{{ errorMessage('date_release') }}</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="date_revision">Fecha Revisión</label>
+        <input id="date_revision" type="date" formControlName="date_revision" />
+      </div>
+    </div>
+
+    @if (submitError()) {
+      <div class="state-banner state-banner--error" role="alert">
+        {{ submitError() }}
+      </div>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="btn btn--secondary" (click)="onReset()">Reiniciar</button>
+      <button type="submit" class="btn btn--primary" [disabled]="form.invalid || form.pending || submitting()">
+        Enviar
+      </button>
+    </div>
+  </form>
+</section>

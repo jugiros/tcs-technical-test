@@ -17,4 +17,14 @@ export class ProductService {
       .get<ProductListResponse>(API_ENDPOINTS.products)
       .pipe(map((response) => response.data));
   }
+
+  checkProductIdExists(id: string): Observable<boolean> {
+    return this.http.get<boolean>(API_ENDPOINTS.productVerification(id));
+  }
+
+  createProduct(product: Product): Observable<Product> {
+    return this.http
+      .post<{ data: Product }>(API_ENDPOINTS.products, product)
+      .pipe(map((response) => response.data));
+  }
 }

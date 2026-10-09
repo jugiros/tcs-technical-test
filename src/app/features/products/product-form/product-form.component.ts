@@ -1,0 +1,115 @@
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { ProductService } from '../../../core/services/product.service';
+import {
+  addOneYearToIsoDate,
+  minDateTodayValidator,
+  oneYearAfterValidator,
+} from '../../../core/validators/date.validators';
+import { idExistsValidator } from '../../../core/validators/id-exists.validator';
+
+type ProductFormControlName = 'id' | 'name' | 'description' | 'logo' | 'date_release' | 'date_revision';
+
+const ERROR_MESSAGES: Record<string, string> = {
+  required: 'Este campo es requerido!',
+  minlength: 'El valor ingresado es demasiado corto.',
+  maxlength: 'El valor ingresado es demasiado largo.',
+  idExists: 'ID no válido!',
+  minDateToday: 'La fecha debe ser igual o mayor a la fecha actual.',
+};
+
+@Component({
+  selector: 'app-product-form',
+  imports: [ReactiveFormsModule],
+  templateUrl: './product-form.component.html',
+  styleUrl: './product-form.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class ProductFormComponent {
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly productService = inject(ProductService);
+  private readonly router = inject(Router);
+
+  protected readonly submitting = signal(false);
+  protected readonly submitError = signal<string | null>(null);
+
+  protected readonly form = this.fb.group(
+    {
+      id: this.fb.control('', {
+        validators: [Validators.required, Validators.minLength(3), Validators.maxLength(10)],
+        asyncValidators: [idExistsValidator(this.productService)],
+        updateOn: 'blur',
+      }),
+      name: this.fb.control('', [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(100),
+      ]),
+      description: this.fb.control('', [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(200),
+      ]),
+      logo: this.fb.control('', [Validators.required]),
+      date_release: this.fb.control('', [Validators.required, minDateTodayValidator]),
+      date_revision: this.fb.control('', [Validators.required]),
+    },
+    { validators: [oneYearAfterValidator('date_release', 'date_revision')] },
+  );
+
+  constructor() {
+    this.form.controls.date_revision.disable();
+
+    this.form.controls.date_release.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+      this.form.controls.date_revision.setValue(value ? addOneYearToIsoDate(value) : '');
+    });
+  }
+
+  protected hasError(controlName: ProductFormControlName): boolean {
+    const control = this.form.controls[controlName];
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  protected errorMessage(controlName: ProductFormControlName): string | null {
+    const control = this.form.controls[controlName];
+    if (!control.errors) {
+      return null;
+    }
+    const [firstErrorKey] = Object.keys(control.errors);
+    return ERROR_MESSAGES[firstErrorKey] ?? 'Valor inválido.';
+  }
+
+  protected onSubmit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.submitting.set(true);
+    this.submitError.set(null);
+
+    this.productService
+      .createProduct(this.form.getRawValue())
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => this.router.navigate(['/']),
+        error: () => {
+          this.submitError.set(
+            'No se pudo crear el producto financiero. Intenta nuevamente más tarde.',
+          );
+          this.submitting.set(false);
+        },
+      });
+  }
+
+  protected onReset(): void {
+    this.form.reset();
+    this.form.controls.date_revision.disable();
+  }
+}

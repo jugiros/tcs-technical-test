@@ -92,17 +92,6 @@
   color: var(--color-text-muted);
 }
 
-.state-banner {
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-}
-
-.state-banner--error {
-  background-color: var(--color-error-bg);
-  color: var(--color-error);
-}
-
 .product-card__footer {
   display: flex;
   justify-content: space-between;
