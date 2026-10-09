@@ -1,0 +1,28 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) 0;
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.5px;
+  }
+}
+
+.app-layout {
+  min-height: calc(100vh - 64px);
+  background-color: var(--color-bg);
+  padding: var(--spacing-xl) var(--spacing-md);
+  display: flex;
+  justify-content: center;
+}

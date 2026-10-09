@@ -1,0 +1,61 @@
+@use 'sass:color';
+
+:root {
+  --color-primary: #1a2b4c;
+  --color-primary-dark: #0f1a33;
+  --color-accent: #f5e05a;
+  --color-accent-hover: #efd63f;
+  --color-bg: #f4f6fa;
+  --color-surface: #ffffff;
+  --color-border: #e2e6ed;
+  --color-text: #1a2b4c;
+  --color-text-muted: #6b7280;
+  --color-error: #e02424;
+  --color-error-bg: #fdf0f0;
+  --font-family-base: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --container-max-width: 1024px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
