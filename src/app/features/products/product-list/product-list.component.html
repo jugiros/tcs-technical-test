@@ -56,7 +56,7 @@
           } @else {
             @for (product of displayedProducts(); track product.id) {
               <tr>
-                <td>
+                <td data-label="Logo">
                   <span class="avatar">
                     <span class="avatar__initials">{{ initials(product.name) }}</span>
                     <img
@@ -67,10 +67,14 @@
                     />
                   </span>
                 </td>
-                <td>{{ product.name }}</td>
-                <td class="cell-description">{{ product.description }}</td>
-                <td>{{ product.date_release | date: 'dd/MM/yyyy':'UTC' }}</td>
-                <td>{{ product.date_revision | date: 'dd/MM/yyyy':'UTC' }}</td>
+                <td data-label="Nombre del producto">{{ product.name }}</td>
+                <td class="cell-description" data-label="Descripción">{{ product.description }}</td>
+                <td data-label="Fecha de liberación">
+                  {{ product.date_release | date: 'dd/MM/yyyy':'UTC' }}
+                </td>
+                <td data-label="Fecha de reestructuración">
+                  {{ product.date_revision | date: 'dd/MM/yyyy':'UTC' }}
+                </td>
                 <td class="actions-cell">
                   <button
                     type="button"

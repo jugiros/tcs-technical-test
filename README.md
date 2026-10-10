@@ -116,7 +116,3 @@ src/
 ├── environments/                  # Configuración por entorno (apiUrl)
 └── styles.scss                     # Estilos globales, variables de diseño y utilidades compartidas
 ```
-
-## Documentación técnica adicional
-
-Las decisiones de arquitectura, los principios de ingeniería aplicados (SOLID, DRY, KISS, YAGNI) y la justificación teórica de cada fase del desarrollo están documentados en `TECHNICAL_DECISIONS_LOG.md`, entregado junto con este repositorio (fuera del control de versiones, a petición explícita del equipo).

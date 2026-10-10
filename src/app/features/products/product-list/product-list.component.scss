@@ -33,6 +33,10 @@
 
 .table-scroll {
   overflow-x: auto;
+
+  @media (max-width: $breakpoint-mobile) {
+    overflow-x: visible;
+  }
 }
 
 .product-table {
@@ -60,6 +64,47 @@
   tbody tr:last-child td {
     border-bottom: none;
   }
+
+  @media (max-width: $breakpoint-mobile) {
+    min-width: 0;
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: block;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-md);
+      overflow: hidden;
+    }
+
+    tbody tr:last-child {
+      margin-bottom: 0;
+    }
+
+    tbody td {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    tbody td[data-label]::before {
+      content: attr(data-label);
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+
+    tbody tr td:last-child {
+      border-bottom: none;
+    }
+  }
 }
 
 .info-icon {
@@ -73,6 +118,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media (max-width: $breakpoint-mobile) {
+    max-width: 60%;
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    text-align: right;
+  }
 }
 
 .avatar {
@@ -102,6 +155,11 @@
 .actions-cell {
   width: 32px;
   text-align: center;
+
+  @media (max-width: $breakpoint-mobile) {
+    width: auto;
+    justify-content: flex-end;
+  }
 }
 
 .menu-trigger {
@@ -157,6 +215,11 @@
   border-radius: var(--radius-md);
   padding: var(--spacing-lg);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+  }
 }
 
 .confirm-modal__message {
@@ -165,12 +228,21 @@
   padding-bottom: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
+
+  @media (max-width: $breakpoint-mobile) {
+    padding-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
 }
 
 .confirm-modal__actions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-md);
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .empty-state {
